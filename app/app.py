@@ -26,7 +26,8 @@ origins = [
 # Add the production frontend URL from an environment variable for security
 FRONTEND_URL = os.getenv("FRONTEND_URL")
 if FRONTEND_URL:
-    origins.append(FRONTEND_URL)
+    # Strip trailing slashes to prevent mismatches with the Origin header
+    origins.append(FRONTEND_URL.rstrip('/'))
 
 print(f"--- DEBUG: Allowed CORS origins: {origins} ---")
 logging.warning(f"Allowed CORS origins: {origins}")
