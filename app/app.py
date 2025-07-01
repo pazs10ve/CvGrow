@@ -28,6 +28,8 @@ FRONTEND_URL = os.getenv("FRONTEND_URL")
 if FRONTEND_URL:
     origins.append(FRONTEND_URL)
 
+logging.info(f"Allowed CORS origins: {origins}")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
