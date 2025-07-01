@@ -1,6 +1,8 @@
 from google import genai
 from dotenv import load_dotenv
 import os
+import subprocess
+import shutil
 from models import ResumeData
 from prompts import create_resume_prompt
 
@@ -35,6 +37,41 @@ def generate_resume_content(data: ResumeData) -> str:
         edited_latex = edited_latex[:-3].strip()
         
     return edited_latex
+
+def convert_tex_to_pdf(tex_file_path: str) -> str:
+    """Converts a .tex file to a .pdf file using pdflatex."""
+    if not shutil.which("pdflatex"):
+        raise FileNotFoundError("pdflatex command not found. Make sure a LaTeX distribution like MiKTeX is installed and in your PATH.")
+    
+    output_dir = os.path.dirname(tex_file_path)
+    command = [
+        "pdflatex",
+        "-output-directory=" + output_dir,
+        tex_file_path
+    ]
+    
+    # Run pdflatex twice for cross-referencing
+    subprocess.run(command, check=True, capture_output=True, text=True)
+    subprocess.run(command, check=True, capture_output=True, text=True)
+
+    pdf_path = tex_file_path.replace(".tex", ".pdf")
+    return pdf_path
+
+def convert_tex_to_docx(tex_file_path: str) -> str:
+    """Converts a .tex file to a .docx file using pandoc."""
+    if not shutil.which("pandoc"):
+        raise FileNotFoundError("pandoc command not found. Make sure Pandoc is installed and in your PATH.")
+
+    docx_path = tex_file_path.replace(".tex", ".docx")
+    command = [
+        "pandoc",
+        tex_file_path,
+        "-o",
+        docx_path
+    ]
+    
+    subprocess.run(command, check=True)
+    return docx_path
 
 def create_latex_file(name: str, full_latex_content: str) -> str:
     """Saves the complete LaTeX content received from the AI to a .tex file."""
