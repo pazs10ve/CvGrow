@@ -24,6 +24,15 @@ function App() {
 
   return (
     <MantineProvider theme={theme} defaultColorScheme="dark">
+      <style
+        dangerouslySetInnerHTML={{
+          __html: `
+            body {
+              background: linear-gradient(145deg, #1A1B1E, #2C2E33);
+            }
+          `,
+        }}
+      />
       <Container size="lg" py="xl">
         <header className={classes.header}>
           <Title order={1} className={classes.title}>

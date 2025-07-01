@@ -5,6 +5,7 @@ import { useForm } from '@mantine/form';
 import { Stepper, Button, Group, TextInput, Textarea, Box, Grid, ActionIcon } from '@mantine/core';
 import type { MantineTheme } from '@mantine/core';
 import { IconPlus, IconTrash } from '@tabler/icons-react';
+import classes from './ResumeForm.module.css';
 
 interface ResumeFormProps {
   setLoading: (loading: boolean) => void;
@@ -101,46 +102,56 @@ const ResumeForm: React.FC<ResumeFormProps> = ({ setLoading, setFiles }) => {
     <form onSubmit={form.onSubmit(handleSubmit)}>
       <Stepper active={active} onStepClick={setActive} styles={{ stepLabel: { whiteSpace: 'nowrap' } }}>
         <Stepper.Step label="Personal" description="Contact info">
-          <TextInput label="Full Name" placeholder="Your full name" {...form.getInputProps('full_name')} />
-          <TextInput mt="md" label="Email" placeholder="Your email" {...form.getInputProps('email')} />
-          <TextInput mt="md" label="Phone Number" placeholder="Your phone number" {...form.getInputProps('phone_number')} />
-          <TextInput mt="md" label="Address" placeholder="City, State" {...form.getInputProps('address')} />
-          <TextInput mt="md" label="LinkedIn URL" placeholder="Your LinkedIn profile" {...form.getInputProps('linkedin_url')} />
-          <TextInput mt="md" label="GitHub URL" placeholder="Your GitHub profile" {...form.getInputProps('github_url')} />
+          <div className={classes.formStep}>
+            <TextInput label="Full Name" placeholder="Your full name" {...form.getInputProps('full_name')} />
+            <TextInput mt="md" label="Email" placeholder="Your email" {...form.getInputProps('email')} />
+            <TextInput mt="md" label="Phone Number" placeholder="Your phone number" {...form.getInputProps('phone_number')} />
+            <TextInput mt="md" label="Address" placeholder="City, State" {...form.getInputProps('address')} />
+            <TextInput mt="md" label="LinkedIn URL" placeholder="Your LinkedIn profile" {...form.getInputProps('linkedin_url')} />
+            <TextInput mt="md" label="GitHub URL" placeholder="Your GitHub profile" {...form.getInputProps('github_url')} />
+          </div>
         </Stepper.Step>
         <Stepper.Step label="Education" description="Your background">
-          {educationFields}
-          <Group justify="center" mt="md">
-            <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={() => form.insertListItem('education', { university_name: '', degree: '', graduation_date: '' })}>
-              Add Education
-            </Button>
-          </Group>
+          <div className={classes.formStep}>
+            {educationFields}
+            <Group justify="center" mt="md">
+              <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={() => form.insertListItem('education', { university_name: '', degree: '', graduation_date: '' })}>
+                Add Education
+              </Button>
+            </Group>
+          </div>
         </Stepper.Step>
         <Stepper.Step label="Experience" description="Work history">
-          {experienceFields}
-          <Group justify="center" mt="md">
-            <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={() => form.insertListItem('experience', { company_name: '', job_title: '', experience_description: '', experience_responsibilities: '' })}>
-              Add Experience
-            </Button>
-          </Group>
+          <div className={classes.formStep}>
+            {experienceFields}
+            <Group justify="center" mt="md">
+              <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={() => form.insertListItem('experience', { company_name: '', job_title: '', experience_description: '', experience_responsibilities: '' })}>
+                Add Experience
+              </Button>
+            </Group>
+          </div>
         </Stepper.Step>
         <Stepper.Step label="Projects" description="Your work">
-            {projectFields}
-            <Group justify="center" mt="md">
-                <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={() => form.insertListItem('projects', { project_name: '', project_description: '' })}>
-                    Add Project
-                </Button>
-            </Group>
+            <div className={classes.formStep}>
+              {projectFields}
+              <Group justify="center" mt="md">
+                  <Button leftSection={<IconPlus size={14} />} variant="subtle" onClick={() => form.insertListItem('projects', { project_name: '', project_description: '' })}>
+                      Add Project
+                  </Button>
+              </Group>
+            </div>
         </Stepper.Step>
         <Stepper.Step label="Skills & Goal" description="Final touches">
-            <TextInput label="Target Job Title" placeholder="e.g., Software Engineer" {...form.getInputProps('job_title')} />
-            <Textarea mt="md" label="Passion Statement / Objective" placeholder="A brief summary of your career goals" {...form.getInputProps('passion_statement')} minRows={3} />
-            <TextInput mt="md" label="Technical Skills" placeholder="Comma-separated, e.g., React, Python" {...form.getInputProps('technical_skills')} />
-            <TextInput mt="md" label="Soft Skills" placeholder="Comma-separated, e.g., Teamwork, Communication" {...form.getInputProps('soft_skills')} />
+            <div className={classes.formStep}>
+              <TextInput label="Target Job Title" placeholder="e.g., Software Engineer" {...form.getInputProps('job_title')} />
+              <Textarea mt="md" label="Passion Statement / Objective" placeholder="A brief summary of your career goals" {...form.getInputProps('passion_statement')} minRows={3} />
+              <TextInput mt="md" label="Technical Skills" placeholder="Comma-separated, e.g., React, Python" {...form.getInputProps('technical_skills')} />
+              <TextInput mt="md" label="Soft Skills" placeholder="Comma-separated, e.g., Teamwork, Communication" {...form.getInputProps('soft_skills')} />
+            </div>
         </Stepper.Step>
       </Stepper>
 
-      <Group justify="center" mt="xl">
+      <Group justify="center" mt="xl" className={classes.controlButtons}>
         {active !== 0 && <Button variant="default" onClick={prevStep}>Back</Button>}
         {active !== 4 && <Button onClick={nextStep}>Next step</Button>}
         {active === 4 && <Button type="submit" size="lg" color="violet">Generate Resume</Button>}
