@@ -1,0 +1,7 @@
+@import '@mantine/core/styles.css';
+
+body {
+  background: linear-gradient(35deg, #1e0c29, #302b63, #24243e);
+  min-height: 100vh;
+  color: #fff;
+}

@@ -2,7 +2,11 @@ from models import ResumeData
 
 def create_resume_prompt(data: ResumeData, latex_template: str) -> str:
     """Creates a prompt for the AI to edit a full LaTeX template with new data."""
-    
+
+    education_str = "\n".join([f"  - {edu.university_name}, {edu.degree}, {edu.graduation_date}" for edu in data.education])
+    experience_str = "\n".join([f"  - {exp.job_title} at {exp.company_name}: {exp.experience_description} Responsibilities: {exp.experience_responsibilities}" for exp in data.experience])
+    projects_str = "\n".join([f"  - {proj.project_name}: {proj.project_description}" for proj in data.projects])
+
     prompt = f"""
     You are an expert LaTeX resume editor. Your task is to take the provided LaTeX template and fill it with the new candidate's information.
     The final output must be the **complete, modified LaTeX file**, ready to be compiled. Do not add any extra explanations or markdown formatting.
@@ -15,11 +19,9 @@ def create_resume_prompt(data: ResumeData, latex_template: str) -> str:
     - GitHub: {data.github_url or 'N/A'}
     - Target Job: {data.job_title}
     - Summary/Objective: Based on this passion statement: '{data.passion_statement}'
-    - University: {data.university_name}
-    - Degree: {data.degree}
-    - Graduation Date: {data.graduation_date}
-    - Experience: {data.experience_description} where responsibilities included: {data.experience_responsibilities}
-    - Projects: {data.project_description}
+    - Education:\n{education_str}
+    - Experience:\n{experience_str}
+    - Projects:\n{projects_str}
     - Skills: {', '.join(data.technical_skills + data.soft_skills)}
 
     **Here is the LaTeX template you must edit. Replace the placeholder information (like 'Jake Ryan', 'Southwestern University', project descriptions, etc.) with the new candidate's information provided above.**

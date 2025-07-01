@@ -2,6 +2,21 @@ from pydantic import BaseModel, EmailStr, ValidationError
 from typing import Optional, List
 
 
+class Education(BaseModel):
+    university_name: str
+    degree: str
+    graduation_date: str
+
+class Experience(BaseModel):
+    company_name: str
+    job_title: str
+    experience_description: str
+    experience_responsibilities: str
+
+class Project(BaseModel):
+    project_name: str
+    project_description: str
+
 class ResumeData(BaseModel):
     full_name: str
     email: EmailStr
@@ -13,14 +28,11 @@ class ResumeData(BaseModel):
     blog_url: Optional[str] = None
     job_title: str
     passion_statement: str
-    university_name: str
-    degree: str
-    graduation_date: str
-    experience_description: str
-    experience_responsibilities: str
-    project_description: str
     technical_skills: List[str]
     soft_skills: List[str]
+    education: List[Education]
+    experience: List[Experience]
+    projects: List[Project]
 
 
 if __name__ == '__main__':

@@ -3,6 +3,7 @@ import tempfile
 import base64
 import subprocess
 from fastapi import FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
 from models import ResumeData
 from services import (
     generate_resume_content, 
@@ -14,8 +15,24 @@ from services import (
 # Configure logging
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
-app = FastAPI(title="CvGrow AI Resume Builder")
+app = FastAPI()
 
+# CORS Middleware
+origins = [
+    "http://localhost:5173",
+    "http://localhost:3000",
+    "http://127.0.0.1:5173",
+]
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=origins,
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+app.title = "CvGrow AI Resume Builder"
 
 @app.get("/")
 def read_root():
@@ -24,6 +41,7 @@ def read_root():
 @app.post("/generate-resume/")
 def generate_resume(data: ResumeData):
     logging.info(f"Received request to generate resume for: {data.full_name}")
+
     # Create a temporary directory that will be automatically cleaned up
     with tempfile.TemporaryDirectory() as temp_dir:
         try:
