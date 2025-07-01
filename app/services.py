@@ -73,17 +73,16 @@ def convert_tex_to_docx(tex_file_path: str) -> str:
     subprocess.run(command, check=True)
     return docx_path
 
-def create_latex_file(name: str, full_latex_content: str) -> str:
-    """Saves the complete LaTeX content received from the AI to a .tex file."""
-    safe_name = "".join(x for x in name.lower() if x.isalnum())
-    output_dir = "generated_resumes"
-    os.makedirs(output_dir, exist_ok=True)
+def create_latex_file(name: str, full_latex_content: str, output_dir: str) -> str:
+    """Creates a .tex file in the specified output directory."""
+    # Sanitize the name to be filesystem-friendly
+    safe_name = "".join(c for c in name if c.isalnum() or c in (' ', '_')).rstrip()
+    filename = f"resume_{safe_name.replace(' ', '_').lower()}.tex"
     
-    file_path = os.path.join(output_dir, f"resume_{safe_name}.tex")
-    
+    # The output directory is now provided and managed externally (e.g., by tempfile)
+    file_path = os.path.join(output_dir, filename)
     with open(file_path, 'w', encoding='utf-8') as f:
         f.write(full_latex_content)
-        
     return file_path
 
 

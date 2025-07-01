@@ -1,4 +1,7 @@
 import logging
+import tempfile
+import base64
+import subprocess
 from fastapi import FastAPI, HTTPException
 from models import ResumeData
 from services import (
@@ -21,45 +24,50 @@ def read_root():
 @app.post("/generate-resume/")
 def generate_resume(data: ResumeData):
     logging.info(f"Received request to generate resume for: {data.full_name}")
-    try:
-        # Step 1: Generate .tex content
-        logging.info("Generating LaTeX content from AI...")
-        resume_latex_content = generate_resume_content(data)
-        logging.info(f"Successfully generated LaTeX content. Length: {len(resume_latex_content)} chars.")
+    # Create a temporary directory that will be automatically cleaned up
+    with tempfile.TemporaryDirectory() as temp_dir:
+        try:
+            # Step 1: Generate LaTeX content
+            logging.info("Generating LaTeX content from AI...")
+            resume_latex_content = generate_resume_content(data)
+            if not resume_latex_content or resume_latex_content.isspace():
+                logging.error("AI returned empty or whitespace content.")
+                raise HTTPException(status_code=500, detail="AI failed to generate content.")
 
-        if not resume_latex_content or resume_latex_content.isspace():
-            logging.error("AI returned empty or whitespace content.")
-            raise HTTPException(status_code=500, detail="AI failed to generate content.")
+            # Step 2: Create the .tex file in the temporary directory
+            logging.info(f"Creating .tex file in temp dir: {temp_dir}")
+            tex_path = create_latex_file(data.full_name, resume_latex_content, temp_dir)
 
-        # Step 2: Create the .tex file
-        logging.info(f"Creating .tex file for {data.full_name}...")
-        tex_path = create_latex_file(data.full_name, resume_latex_content)
-        logging.info(f"Successfully created .tex file at: {tex_path}")
+            # Step 3: Convert to PDF and DOCX in the same temporary directory
+            logging.info(f"Converting {tex_path} to PDF and DOCX...")
+            pdf_path = convert_tex_to_pdf(tex_path)
+            docx_path = convert_tex_to_docx(tex_path)
+            logging.info("Conversions successful.")
 
-        # Step 3: Convert .tex to .pdf
-        logging.info(f"Converting {tex_path} to PDF...")
-        pdf_path = convert_tex_to_pdf(tex_path)
-        logging.info(f"Successfully created PDF at: {pdf_path}")
+            # Step 4: Read the binary content of the generated files
+            logging.info("Reading and encoding generated files...")
+            with open(pdf_path, "rb") as f:
+                pdf_b64 = base64.b64encode(f.read()).decode("utf-8")
+            with open(docx_path, "rb") as f:
+                docx_b64 = base64.b64encode(f.read()).decode("utf-8")
+            with open(tex_path, "rb") as f:
+                tex_b64 = base64.b64encode(f.read()).decode("utf-8")
 
-        # Step 4: Convert .tex to .docx
-        logging.info(f"Converting {tex_path} to DOCX...")
-        docx_path = convert_tex_to_docx(tex_path)
-        logging.info(f"Successfully created DOCX at: {docx_path}")
-        
-        return {
-            "message": "Resume created successfully in all formats.",
-            "paths": {
-                "tex": tex_path,
-                "pdf": pdf_path,
-                "docx": docx_path
+            # Step 5: Return the Base64-encoded files in the response
+            return {
+                "message": "Resume generated successfully.",
+                "files": {
+                    "pdf": pdf_b64,
+                    "docx": docx_b64,
+                    "tex": tex_b64,
+                }
             }
-        }
-    except FileNotFoundError as e:
-        logging.error(f"File not found error: {e}", exc_info=True)
-        raise HTTPException(status_code=404, detail=str(e))
-    except Exception as e:
-        logging.error(f"An unexpected error occurred: {e}", exc_info=True)
-        raise HTTPException(status_code=500, detail=str(e))
+        except (FileNotFoundError, RuntimeError, subprocess.CalledProcessError) as e:
+            logging.error(f"A file operation or conversion error occurred: {e}", exc_info=True)
+            raise HTTPException(status_code=500, detail=str(e))
+        except Exception as e:
+            logging.error(f"An unexpected error occurred: {e}", exc_info=True)
+            raise HTTPException(status_code=500, detail="An unexpected error occurred.")
 
 if __name__ == "__main__":
     import uvicorn
