@@ -1,0 +1,6 @@
+google-genai
+dotenv
+fastapi 
+pydantic[email]
+uvicorn
+gunicorn
