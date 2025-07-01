@@ -1,5 +1,5 @@
-from models import ResumeData
-from services import generate_resume_content, create_latex_file
+from .models import ResumeData
+from .services import generate_resume_content, create_latex_file
 import os
 
 def run_test_workflow():

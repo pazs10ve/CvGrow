@@ -4,8 +4,8 @@ import base64
 import subprocess
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from models import ResumeData
-from services import (
+from .models import ResumeData
+from .services import (
     generate_resume_content, 
     create_latex_file, 
     convert_tex_to_pdf, 

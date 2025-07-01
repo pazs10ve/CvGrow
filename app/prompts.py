@@ -1,4 +1,4 @@
-from models import ResumeData
+from .models import ResumeData
 
 def create_resume_prompt(data: ResumeData, latex_template: str) -> str:
     """Creates a prompt for the AI to edit a full LaTeX template with new data."""

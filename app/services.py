@@ -3,8 +3,8 @@ from dotenv import load_dotenv
 import os
 import subprocess
 import shutil
-from models import ResumeData
-from prompts import create_resume_prompt
+from .models import ResumeData
+from .prompts import create_resume_prompt
 
 load_dotenv()
 
