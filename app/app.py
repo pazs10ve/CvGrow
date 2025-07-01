@@ -3,6 +3,7 @@ import tempfile
 import base64
 import subprocess
 from fastapi import FastAPI, HTTPException
+import os
 from fastapi.middleware.cors import CORSMiddleware
 from .models import ResumeData
 from .services import (
@@ -19,10 +20,13 @@ app = FastAPI()
 
 # CORS Middleware
 origins = [
-    "http://localhost:5173",
-    "http://localhost:3000",
-    "http://127.0.0.1:5173",
+    "http://localhost:5173", # Local dev server for frontend
 ]
+
+# Add the production frontend URL from an environment variable for security
+FRONTEND_URL = os.getenv("FRONTEND_URL")
+if FRONTEND_URL:
+    origins.append(FRONTEND_URL)
 
 app.add_middleware(
     CORSMiddleware,
