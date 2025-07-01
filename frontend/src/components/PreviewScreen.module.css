@@ -1,0 +1,15 @@
+.grid {
+  width: 100%;
+}
+
+.pdfPreview {
+  height: 75vh;
+  overflow: hidden;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  height: 100%;
+}

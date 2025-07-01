@@ -1,0 +1,17 @@
+.header {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.title {
+  font-size: 3.5rem;
+  font-weight: 900;
+  letter-spacing: -1px;
+}
+
+.paper {
+  background-color: rgba(37, 38, 43, 0.7);
+  -webkit-backdrop-filter: blur(12px);
+  backdrop-filter: blur(12px);
+  border: 1px solid var(--mantine-color-dark-4);
+}
